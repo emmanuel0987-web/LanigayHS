@@ -1,0 +1,47 @@
+﻿@model SDG4_LMS.Models.Assignment
+@{
+    ViewData["Title"] = "Create Assignment";
+    var courseId = (int)ViewData["CourseId"];
+}
+
+<h1>Create Assignment</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CourseId" value="@courseId" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DueDate" class="form-label">Due Date</label>
+                <input asp-for="DueDate" class="form-control" type="datetime-local" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MaxScore" class="form-label">Max Score</label>
+                <input asp-for="MaxScore" class="form-control" type="number" min="1" max="100" value="100" />
+                <span asp-validation-for="MaxScore" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-action="Index" asp-route-courseId="@courseId" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

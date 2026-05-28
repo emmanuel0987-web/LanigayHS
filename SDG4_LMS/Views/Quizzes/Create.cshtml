@@ -1,0 +1,54 @@
+﻿@model SDG4_LMS.Models.Quiz
+@{
+    ViewData["Title"] = "Create Quiz";
+    int courseId = ViewBag.CourseId;
+}
+
+<h1><i class="fas fa-plus-circle me-2"></i>Create Quiz</h1>
+<p class="text-muted">Step 1 of 2: Enter quiz details, then you will add questions.</p>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CourseId" value="@courseId" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label fw-bold"></label>
+                <input asp-for="Title" class="form-control" required />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TimeLimitMinutes" class="form-label fw-bold">Time Limit (minutes)</label>
+                    <input asp-for="TimeLimitMinutes" class="form-control" type="number" min="1" max="180" value="30" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PassingScore" class="form-label fw-bold">Passing Score (%)</label>
+                    <input asp-for="PassingScore" class="form-control" type="number" min="1" max="100" value="60" />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Create Quiz & Add Questions
+                </button>
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@courseId" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

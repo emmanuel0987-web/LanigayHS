@@ -1,0 +1,51 @@
+﻿@model IEnumerable<SDG4_LMS.Models.Lesson>
+@{
+    ViewData["Title"] = "Lessons";
+    var courseId = (int)ViewData["CourseId"];
+    var courseTitle = (string?)ViewData["CourseTitle"];
+}
+
+<h1>Lessons - @courseTitle</h1>
+
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    <a asp-action="Create" asp-route-courseId="@courseId" class="btn btn-success mb-3">Add Lesson</a>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No lessons available yet.</div>
+}
+else
+{
+    <div class="accordion" id="lessonsAccordion">
+        @foreach (var lesson in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#lesson_@lesson.Id">
+                        <strong>Lesson @lesson.Order:</strong> @lesson.Title
+                    </button>
+                </h2>
+                <div id="lesson_@lesson.Id" class="accordion-collapse collapse" data-bs-parent="#lessonsAccordion">
+                    <div class="accordion-body">
+                        <p>@lesson.Content</p>
+                        @if (!string.IsNullOrEmpty(lesson.VideoUrl))
+                        {
+                            <p><a href="@lesson.VideoUrl" target="_blank" class="btn btn-info btn-sm">Watch Video</a></p>
+                        }
+                        @if (!string.IsNullOrEmpty(lesson.FileUrl))
+                        {
+                            <p><a href="@lesson.FileUrl" target="_blank" class="btn btn-secondary btn-sm">Download File</a></p>
+                        }
+                        @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@lesson.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@lesson.Id" class="btn btn-danger btn-sm">Delete</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

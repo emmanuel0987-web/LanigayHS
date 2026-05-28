@@ -1,0 +1,41 @@
+﻿@model IEnumerable<SDG4_LMS.Models.Assignment>
+@{
+    ViewData["Title"] = "Assignments";
+    var courseId = (int)ViewData["CourseId"];
+    var courseTitle = (string?)ViewData["CourseTitle"];
+}
+
+<h1>Assignments - @courseTitle</h1>
+
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    <a asp-action="Create" asp-route-courseId="@courseId" class="btn btn-success mb-3">Create Assignment</a>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No assignments yet.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text">@item.Description</p>
+                        <p><strong>Due:</strong> @item.DueDate.ToString("MMM dd, yyyy hh:mm tt")</p>
+                        <p><strong>Max Score:</strong> @item.MaxScore</p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">View Details</a>
+                        @if (User.IsInRole("Student"))
+                        {
+                            <a asp-action="Submit" asp-route-assignmentId="@item.Id" class="btn btn-primary btn-sm">Submit</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

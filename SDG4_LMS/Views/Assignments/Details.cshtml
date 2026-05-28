@@ -1,0 +1,59 @@
+﻿@model SDG4_LMS.Models.Assignment
+@{
+    ViewData["Title"] = "Assignment Details";
+    var submissions = (List<SDG4_LMS.Models.AssignmentSubmission>)ViewData["Submissions"];
+}
+
+<h1>@Model.Title</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p class="card-text">@Model.Description</p>
+        <p><strong>Due Date:</strong> @Model.DueDate.ToString("MMM dd, yyyy hh:mm tt")</p>
+        <p><strong>Max Score:</strong> @Model.MaxScore</p>
+    </div>
+</div>
+
+<h3>Submissions</h3>
+@if (submissions == null || !submissions.Any())
+{
+    <div class="alert alert-info">No submissions yet.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Submitted At</th>
+                <th>Content</th>
+                <th>Score</th>
+                <th>Feedback</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sub in submissions)
+            {
+                <tr>
+                    <td>@(sub.Student?.User?.FirstName + " " + sub.Student?.User?.LastName)</td>
+                    <td>@sub.SubmittedAt.ToString("MMM dd, yyyy hh:mm tt")</td>
+                    <td>@sub.TextContent</td>
+                    <td>@(sub.Score?.ToString() ?? "Not Graded")</td>
+                    <td>@sub.Feedback</td>
+                    <td>
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <form asp-action="Grade" method="post" class="d-flex gap-2">
+                                <input type="hidden" name="id" value="@sub.Id" />
+                                <input type="number" name="score" class="form-control form-control-sm" style="width:70px" min="0" max="@Model.MaxScore" step="0.1" />
+                                <input type="text" name="feedback" class="form-control form-control-sm" placeholder="Feedback" />
+                                <button type="submit" class="btn btn-success btn-sm">Grade</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

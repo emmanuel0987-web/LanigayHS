@@ -1,0 +1,71 @@
+﻿@model SDG4_LMS.Models.Course
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h1>@Model.Title</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">@Model.Description</p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Category:</strong> @Model.Category</li>
+            <li class="list-group-item"><strong>Credits:</strong> @Model.Credits</li>
+            <li class="list-group-item"><strong>Start Date:</strong> @Model.StartDate.ToShortDateString()</li>
+            <li class="list-group-item"><strong>End Date:</strong> @Model.EndDate.ToShortDateString()</li>
+            <li class="list-group-item">
+                <strong>Teacher:</strong>
+                @(Model.Teacher?.User?.FirstName + " " + Model.Teacher?.User?.LastName)
+            </li>
+            <li class="list-group-item"><strong>Status:</strong> @(Model.IsActive ? "Active" : "Inactive")</li>
+        </ul>
+    </div>
+    <div class="card-footer">
+        @if (User.IsInRole("Student"))
+        {
+            <form asp-controller="Enrollments" asp-action="Enroll" method="post" class="d-inline">
+                <input type="hidden" name="courseId" value="@Model.Id" />
+                <button type="submit" class="btn btn-success">Enroll Now</button>
+            </form>
+        }
+        <a asp-controller="Lessons" asp-action="Index" asp-route-courseId="@Model.Id" class="btn btn-success btn-sm">Lessons</a>
+        <a asp-controller="Assignments" asp-action="Index" asp-route-courseId="@Model.Id" class="btn btn-warning btn-sm">Assignments</a>
+        <a asp-controller="Quizzes" asp-action="Index" asp-route-courseId="@Model.Id" class="btn btn-info btn-sm">Quizzes</a>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Back to List</a>
+    </div>
+</div>
+
+<h3>Enrolled Students</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Enrollment Date</th>
+            <th>Status</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var enrollment in Model.Enrollments)
+        {
+            <tr>
+                <td>
+                    @(enrollment.Student?.User?.FirstName + " " + enrollment.Student?.User?.LastName)
+                </td>
+                <td>@enrollment.EnrollmentDate.ToShortDateString()</td>
+                <td>@enrollment.Status</td>
+                <td>@(enrollment.FinalGrade?.ToString() ?? "Not Graded")</td>
+            </tr>
+        }
+    </tbody>
+</table>

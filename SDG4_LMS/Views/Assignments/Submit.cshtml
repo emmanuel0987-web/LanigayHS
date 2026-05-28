@@ -1,0 +1,34 @@
+﻿@model SDG4_LMS.Models.AssignmentSubmission
+@{
+    ViewData["Title"] = "Submit Assignment";
+    var assignmentId = (int)ViewData["AssignmentId"];
+}
+
+<h1>Submit Assignment</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Submit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AssignmentId" value="@assignmentId" />
+
+            <div class="mb-3">
+                <label asp-for="TextContent" class="form-label">Your Answer</label>
+                <textarea asp-for="TextContent" class="form-control" rows="8" required></textarea>
+                <span asp-validation-for="TextContent" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FileUrl" class="form-label">File URL (optional)</label>
+                <input asp-for="FileUrl" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

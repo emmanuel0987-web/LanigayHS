@@ -1,0 +1,73 @@
+﻿@model SDG4_LMS.Models.Course
+
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<h1>Create Course</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6 col-lg-5">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Credits" class="form-label"></label>
+                <input asp-for="Credits" class="form-control" type="number" />
+                <span asp-validation-for="Credits" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="StartDate" class="form-label">Start Date</label>
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EndDate" class="form-label">End Date</label>
+                <input asp-for="EndDate" class="form-control" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+
+            <!-- Teacher dropdown (if required by your model) -->
+            <div class="mb-3">
+                <label asp-for="TeacherId" class="form-label">Teacher</label>
+                <select asp-for="TeacherId" class="form-select" asp-items="ViewBag.TeacherId"></select>
+                <span asp-validation-for="TeacherId" class="text-danger"></span>
+            </div>
+
+            <!-- THE CREATE BUTTON -->
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>Create
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

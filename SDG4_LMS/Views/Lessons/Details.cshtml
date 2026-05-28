@@ -1,0 +1,23 @@
+﻿@model SDG4_LMS.Models.Lesson
+@{
+    ViewData["Title"] = "Lesson Details";
+}
+
+<h1>@Model.Title</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p class="card-text">@Model.Content</p>
+        @if (!string.IsNullOrEmpty(Model.VideoUrl))
+        {
+            <p><a href="@Model.VideoUrl" target="_blank" class="btn btn-info">Watch Video</a></p>
+        }
+        @if (!string.IsNullOrEmpty(Model.FileUrl))
+        {
+            <p><a href="@Model.FileUrl" target="_blank" class="btn btn-secondary">Download File</a></p>
+        }
+    </div>
+    <div class="card-footer">
+        <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-secondary">Back to Lessons</a>
+    </div>
+</div>

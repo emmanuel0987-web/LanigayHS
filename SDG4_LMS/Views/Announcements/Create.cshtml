@@ -1,0 +1,50 @@
+﻿@model SDG4_LMS.Models.Announcement
+@{
+    ViewData["Title"] = "Post Announcement";
+    var courses = (List<SDG4_LMS.Models.Course>)ViewData["Courses"];
+}
+
+<h1>Post Announcement</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CourseId" class="form-label">Target Course (optional)</label>
+                <select asp-for="CourseId" class="form-select">
+                    <option value="">All Students</option>
+                    @foreach (var course in courses)
+                    {
+                        <option value="@course.Id">@course.Title</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input asp-for="IsImportant" class="form-check-input" />
+                <label asp-for="IsImportant" class="form-check-label"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Post Announcement</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

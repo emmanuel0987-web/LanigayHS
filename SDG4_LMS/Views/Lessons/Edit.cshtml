@@ -1,0 +1,51 @@
+﻿@model SDG4_LMS.Models.Lesson
+@{
+    ViewData["Title"] = "Edit Lesson";
+}
+
+<h1>Edit Lesson</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CourseId" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="VideoUrl" class="form-label">Video URL (optional)</label>
+                <input asp-for="VideoUrl" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FileUrl" class="form-label">File URL (optional)</label>
+                <input asp-for="FileUrl" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Order" class="form-label">Lesson Order</label>
+                <input asp-for="Order" class="form-control" type="number" min="1" />
+                <span asp-validation-for="Order" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

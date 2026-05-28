@@ -1,0 +1,57 @@
+﻿@model SDG4_LMS.Models.Student
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<h1>Welcome, @Model.User?.FirstName @Model.User?.LastName</h1>
+<p class="text-muted">
+    Grade Level: @Model.GradeLevel |
+    Enrolled Since: @Model.EnrollmentDate.ToShortDateString()
+</p>
+
+<h3 class="mt-4">My Enrollments</h3>
+
+@if (Model.Enrollments == null || !Model.Enrollments.Any())
+{
+    <div class="alert alert-info">
+        You are not enrolled in any subjects yet.
+        <a asp-controller="Courses" asp-action="Index" class="btn btn-primary mt-2">Browse Subjects</a>
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Subject</th>
+                <th>Category</th>
+                <th>Credits</th>
+                <th>Enrollment Date</th>
+                <th>Status</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var enrollment in Model.Enrollments)
+            {
+                <tr>
+                    <td>@enrollment.Course?.Title</td>
+                    <td>@enrollment.Course?.Category</td>
+                    <td>@enrollment.Course?.Credits</td>
+                    <td>@enrollment.EnrollmentDate.ToShortDateString()</td>
+                    <td><span class="badge bg-primary">@enrollment.Status</span></td>
+                    <td>
+                        @if (enrollment.FinalGrade.HasValue)
+                        {
+                            <span class="badge bg-success">@enrollment.FinalGrade / 100</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Not Graded</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

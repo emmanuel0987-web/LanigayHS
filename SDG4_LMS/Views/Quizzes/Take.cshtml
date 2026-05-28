@@ -1,0 +1,81 @@
+﻿@model SDG4_LMS.Models.ViewModels.TakeQuizViewModel
+@{
+    ViewData["Title"] = "Take Quiz";
+}
+
+<h1><i class="fas fa-edit me-2"></i>@Model.QuizTitle</h1>
+<div class="alert alert-warning d-flex justify-content-between align-items-center">
+    <span><i class="fas fa-clock me-2"></i>Time remaining:</span>
+    <span id="timer" class="fw-bold text-danger fs-4">@Model.TimeLimitMinutes:00</span>
+</div>
+
+<form asp-action="Submit" method="post" id="quizForm">
+    <input type="hidden" asp-for="AttemptId" />
+    <input type="hidden" asp-for="QuizId" />
+
+    <div class="row">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            var q = Model.Questions[i];
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <strong>Question @(i + 1)</strong>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" name="Questions[@i].QuestionId" value="@q.QuestionId" />
+                        <p class="card-text fw-bold mb-3">@q.QuestionText</p>
+
+                        <div class="list-group">
+                            <label class="list-group-item list-group-item-action d-flex align-items-center">
+                                <input class="form-check-input me-3" type="radio" name="Questions[@i].SelectedAnswer" value="A" required>
+                                <strong class="me-2">A.</strong> @q.OptionA
+                            </label>
+                            <label class="list-group-item list-group-item-action d-flex align-items-center">
+                                <input class="form-check-input me-3" type="radio" name="Questions[@i].SelectedAnswer" value="B">
+                                <strong class="me-2">B.</strong> @q.OptionB
+                            </label>
+                            <label class="list-group-item list-group-item-action d-flex align-items-center">
+                                <input class="form-check-input me-3" type="radio" name="Questions[@i].SelectedAnswer" value="C">
+                                <strong class="me-2">C.</strong> @q.OptionC
+                            </label>
+                            <label class="list-group-item list-group-item-action d-flex align-items-center">
+                                <input class="form-check-input me-3" type="radio" name="Questions[@i].SelectedAnswer" value="D">
+                                <strong class="me-2">D.</strong> @q.OptionD
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-grid d-md-flex justify-content-md-end mb-5 gap-2">
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-paper-plane me-2"></i>Submit Quiz
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        let min = @Model.TimeLimitMinutes, sec = 0;
+        const timerEl = document.getElementById('timer');
+        const form = document.getElementById('quizForm');
+
+        const interval = setInterval(() => {
+            if (sec === 0) {
+                if (min === 0) {
+                    clearInterval(interval);
+                    alert("Time is up! Submitting automatically.");
+                    form.submit();
+                    return;
+                }
+                min--; sec = 59;
+            } else {
+                sec--;
+            }
+            timerEl.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+        }, 1000);
+    </script>
+}

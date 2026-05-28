@@ -1,0 +1,42 @@
+﻿@model IEnumerable<SDG4_LMS.Models.Announcement>
+@{
+    ViewData["Title"] = "Announcements";
+}
+
+<h1>Announcements</h1>
+
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    <a asp-action="Create" class="btn btn-success mb-3">Post Announcement</a>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No announcements yet.</div>
+}
+else
+{
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3 @(item.IsImportant ? "border-danger" : "")">
+            <div class="card-header @(item.IsImportant ? "bg-danger text-white" : "bg-light")">
+                <strong>@item.Title</strong>
+                @if (item.IsImportant)
+                {
+                    <span class="badge bg-warning text-dark ms-2">IMPORTANT</span>
+                }
+                <span class="float-end text-muted small">@item.PostedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
+            </div>
+            <div class="card-body">
+                <p class="card-text">@item.Content</p>
+                <p class="text-muted small">
+                    Posted by: @(item.PostedBy?.FirstName + " " + item.PostedBy?.LastName)
+                    @if (item.Course != null)
+                    {
+                        <span> | For: @item.Course.Title</span>
+                    }
+                </p>
+            </div>
+        </div>
+    }
+}

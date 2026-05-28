@@ -1,0 +1,62 @@
+﻿@model IEnumerable<SDG4_LMS.Models.Quiz>
+@{
+    ViewData["Title"] = "Quizzes";
+}
+
+<h1><i class="fas fa-question-circle me-2"></i>Quizzes</h1>
+
+@if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" asp-route-courseId="@(ViewBag.CourseId)" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>Create New Quiz
+        </a>
+    </p>
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">@item.Title</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">@(item.Description ?? "No description")</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Time Limit:</span>
+                            <span class="fw-bold">@item.TimeLimitMinutes min</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Passing Score:</span>
+                            <span class="fw-bold">@item.PassingScore%</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Questions:</span>
+                            <span class="fw-bold">@(item.Questions == null ? 0 : item.Questions.Count) / 20</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white">Details</a>
+                    
+                    @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="QuizQuestions" asp-action="Create" asp-route-quizId="@item.Id" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i>Add Questions
+                        </a>
+                    }
+                    
+                    @if (User.IsInRole("Student"))
+                    {
+                        <a asp-action="Take" asp-route-id="@item.Id" class="btn btn-primary btn-sm">
+                            <i class="fas fa-play me-1"></i>Take Quiz
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

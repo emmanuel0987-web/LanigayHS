@@ -1,0 +1,68 @@
+﻿@model IEnumerable<SDG4_LMS.Models.Course>
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h1>Courses</h1>
+
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <input type="text" name="searchString" class="form-control" placeholder="Search courses..." value="@ViewData["CurrentFilter"]" />
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var cat in (List<string>)ViewData["Categories"])
+                {
+                    if (cat == (string?)ViewData["CurrentCategory"])
+                    {
+                        <option value="@cat" selected>@cat</option>
+                    }
+                    else
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+        @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+        {
+            <div class="col-md-3 text-end">
+                <a asp-action="Create" class="btn btn-success">Create New Course</a>
+            </div>
+        }
+    </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@item.Category</h6>
+                    <p class="card-text">@item.Description</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Credits: @item.Credits | 
+                            Teacher: @(item.Teacher?.User?.FirstName + " " + item.Teacher?.User?.LastName)
+                        </small>
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                    @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

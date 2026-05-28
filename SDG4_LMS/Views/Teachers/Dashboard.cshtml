@@ -1,0 +1,119 @@
+﻿@model SDG4_LMS.Models.Teacher
+@{
+    ViewData["Title"] = "Teacher Dashboard";
+
+    string SafeName(ApplicationUser u)
+    {
+        if (u == null) return "Unknown";
+        var name = $"{u.FirstName} {u.LastName}".Trim();
+        return string.IsNullOrWhiteSpace(name) ? u.Email : name;
+    }
+}
+
+<h1>Welcome, @SafeName(Model.User)</h1>
+<p class="text-muted">Department: @Model.Department | Qualification: @Model.Qualification</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<h3 class="mt-4">My Courses</h3>
+
+@if (Model.Courses == null || !Model.Courses.Any())
+{
+    <div class="alert alert-info">
+        You have not created any courses yet.
+        <a asp-controller="Courses" asp-action="Create">Create a course</a>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var course in Model.Courses)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        @course.Title
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@course.Description</p>
+                        <p><strong>Enrolled Students:</strong> @(course.Enrollments?.Count ?? 0)</p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="btn btn-info btn-sm">View Details</a>
+                        <a asp-controller="Courses" asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm">Edit</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <h3 class="mt-5">Student Enrollments & Grading</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Course</th>
+                    <th>Student</th>
+                    <th>Status</th>
+                    <th>Current Grade</th>
+                    <th style="width: 220px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model.Courses)
+                {
+                    @foreach (var enrollment in course.Enrollments ?? new List< Enrollment > ())
+                    {
+                        <tr>
+                            <td class="fw-bold">@course.Title</td>
+                            <td>@SafeName(enrollment.Student?.User)</td>
+                            <td><span class="badge bg-success">@enrollment.Status</span></td>
+                            <td class="text-center">
+                                @if (enrollment.FinalGrade.HasValue)
+                                {
+                                    <span class="fw-bold text-primary">@enrollment.FinalGrade.Value.ToString("F1")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <!-- FIXED: posts to Teachers/Grade with correct parameter names -->
+                                <form asp-controller="Teachers" asp-action="Grade" method="post" class="d-flex gap-2 align-items-center">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="enrollmentId" value="@enrollment.Id" />
+                                    <input type="number"
+                                           name="finalGrade"
+                                           class="form-control form-control-sm"
+                                           style="width: 80px;"
+                                           min="0"
+                                           max="100"
+                                           step="0.1"
+                                           value="@(enrollment.FinalGrade?.ToString("F1") ?? "")"
+                                           required />
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="fas fa-save me-1"></i>Grade
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}

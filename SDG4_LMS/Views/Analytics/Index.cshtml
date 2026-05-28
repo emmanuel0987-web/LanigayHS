@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Learning Analytics";
+    var courseLabels = (List<string>)ViewData["CourseLabels"];
+    var enrollmentCounts = (List<int>)ViewData["EnrollmentCounts"];
+    var gradeRanges = (List<int>)ViewData["GradeRanges"];
+    var quizPassed = (int)ViewData["QuizPassed"];
+    var quizFailed = (int)ViewData["QuizFailed"];
+    var totalStudents = (int)ViewData["TotalStudents"];
+    var totalCourses = (int)ViewData["TotalCourses"];
+    var totalEnrollments = (int)ViewData["TotalEnrollments"];
+    var averageGrade = (double)ViewData["AverageGrade"];
+}
+
+<h1><i class="fas fa-chart-line me-2"></i>Learning Analytics Dashboard</h1>
+<p class="text-muted">Data-driven insights for quality education</p>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <i class="fas fa-users mb-2"></i>
+            <div class="stat-number">@totalStudents</div>
+            <div>Total Students</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+            <i class="fas fa-book mb-2"></i>
+            <div class="stat-number">@totalCourses</div>
+            <div>My Subjects</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+            <i class="fas fa-user-check mb-2"></i>
+            <div class="stat-number">@totalEnrollments</div>
+            <div>Total Enrollments</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center" style="background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);">
+            <i class="fas fa-star mb-2"></i>
+            <div class="stat-number">@averageGrade.ToString("F1")</div>
+            <div>Average Grade</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-chart-bar me-2"></i>Enrollments per Subject
+            </div>
+            <div class="card-body">
+                <canvas id="enrollmentChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-chart-pie me-2"></i>Grade Distribution
+            </div>
+            <div class="card-body">
+                <canvas id="gradeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <i class="fas fa-clipboard-check me-2"></i>Quiz Pass/Fail Rate
+            </div>
+            <div class="card-body">
+                <canvas id="quizChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Enrollment Bar Chart
+        new Chart(document.getElementById('enrollmentChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(courseLabels)),
+                datasets: [{
+                    label: 'Enrollments',
+                    data: @Html.Raw(Json.Serialize(enrollmentCounts)),
+                    backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                    borderColor: 'rgba(25, 135, 84, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        // Grade Distribution Pie Chart
+        new Chart(document.getElementById('gradeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['90-100 (A)', '80-89 (B)', '70-79 (C)', '60-69 (D)', 'Below 60 (F)'],
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(gradeRanges)),
+                    backgroundColor: ['#198754', '#0d6efd', '#ffc107', '#fd7e14', '#dc3545']
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Quiz Pass/Fail Pie Chart
+        new Chart(document.getElementById('quizChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Passed', 'Failed'],
+                datasets: [{
+                    data: [@quizPassed, @quizFailed],
+                    backgroundColor: ['#198754', '#dc3545']
+                }]
+            },
+            options: { responsive: true }
+        });
+    </script>
+}
